@@ -1,0 +1,6 @@
+node_modules
+out
+tmp
+test.ly
+test.svg
+.DS_Store
