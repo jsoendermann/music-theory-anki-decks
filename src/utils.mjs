@@ -1,4 +1,5 @@
 import { Note, Interval, Key } from '@tonaljs/tonal'
+import _ from 'lodash'
 
 export const interavlToStr = interval => {
   const i = Interval.get(interval)
@@ -90,4 +91,93 @@ export const getNaturalNoteInKey = (natural, tonicNote, mode) => {
   throw new Error(
     `${scale} doesn't include ${pitchClass} for ${tonicNote} ${mode}`,
   )
+}
+
+export const getNotesInTriad = (root, thirds) => {
+  return [
+    root,
+    Note.transpose(root, thirds[0]),
+    Note.transpose(Note.transpose(root, thirds[0]), thirds[1]),
+  ]
+}
+
+export const take = (gen, num) => {
+  const arr = []
+  for (let i = 0; i < num; i++) {
+    const { done, value } = gen.next()
+    if (done) {
+      return arr
+    }
+    arr.push(value)
+  }
+  return arr
+}
+
+export const getNotesInPitchClassBetween = (pc, inclLow, inclHigh) => {
+  return [1, 2, 3, 4, 5, 6, 7]
+    .map(oct => pc + oct)
+    .filter(note => isNoteGreaterOrEqThan(note, inclLow))
+    .filter(note => isNoteLessOrEqThan(note, inclHigh))
+}
+
+export const getRandomNoteInPitchClassBetween = (pc, inclLow, inclHigh) =>
+  _.sample(getNotesInPitchClassBetween(pc, inclLow, inclHigh))
+
+export const numToRoman = num => {
+  switch (num) {
+    case 1:
+      return 'i'
+    case 2:
+      return 'ii'
+    case 3:
+      return 'iii'
+    case 4:
+      return 'iv'
+    case 5:
+      return 'v'
+    case 6:
+      return 'vi'
+    case 7:
+      return 'vii'
+    default:
+      throw new Error(`Can't convert ${num} to roman`)
+  }
+}
+
+export const triadToRomanHTML = (scaleDegree, quality, position) => {
+  if (quality === 'AUGMENTED') {
+    throw new Error('Augmented triad')
+  }
+  let html =
+    '<div style="display:flex;align-items: center;font-family: monospace;"><span style="font-size: 190%; margin-right: 6px;">'
+
+  let num = numToRoman(scaleDegree)
+
+  if (quality === 'MAJOR') {
+    num = num.toLocaleUpperCase()
+  }
+  html += num
+
+  if (quality === 'DIMINISHED') {
+    html += '<sup>o</sup>'
+  }
+
+  html += '</span>'
+
+  if (position !== 'ROOT_POSITION') {
+    html +=
+      '<div style="display: flex; flex-direction: column;"><span>6</span><span>'
+
+    if (position === 'SECOND_INVERSION') {
+      html += '4'
+    } else {
+      html += '&nbsp;'
+    }
+
+    html += '</span></div>'
+  }
+
+  html += '</div>'
+
+  return html
 }

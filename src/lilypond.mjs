@@ -65,8 +65,36 @@ ${preludeLy(2.5, 1)}
 }
 `
 
+const fourNotesInGrandStaff = (tonicNoteDE, mode, notesDE) => `
+${preludeLy(1.8, 1.5)}
+
+{
+  \\new GrandStaff <<
+    \\new Staff {  
+      \\override Staff.TimeSignature #'stencil = ##f 
+      \\key ${tonicNoteDE} \\${mode}
+      <${notesDE[3]} ${notesDE[2]}>1
+    }
+    \\new Staff {  
+      \\override Staff.TimeSignature #'stencil = ##f 
+      \\clef bass
+      \\key ${tonicNoteDE} \\${mode}
+      <${notesDE[1]}  ${notesDE[0]}>1
+    }
+  >>
+       
+ %\\bar "|."
+}
+
+
+`
+
 const noteStrToGerman = note => {
   const n = Note.get(note)
+
+  if (!n.letter) {
+    throw new Error(`Can't process note ${note}`)
+  }
 
   let german = n.letter.toLowerCase()
   if (n.alt === -2) {
@@ -139,8 +167,17 @@ export class LilypondFile {
     )
   }
 
+  addFourNotesInGrandStaff(keyTonic, mode, notes) {
+    // console.log(keyTonic, notes)
+    const keyTonicDE = noteStrToGerman(keyTonic)
+
+    return this.addSvg(
+      fourNotesInGrandStaff(keyTonicDE, mode, notes.map(noteStrToGerman)),
+    )
+  }
+
   async createFiles() {
-    console.log(`${this.counter + 1} files`)
+    console.log(`${this.counter} files`)
     const tmpFilename = Math.random().toFixed(10).slice(2) + '.ly'
     writeFileSync(join('tmp', tmpFilename), this.fileContent, {
       encoding: 'utf8',

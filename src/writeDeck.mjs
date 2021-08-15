@@ -11,7 +11,10 @@ export async function writeDeck(getData, processRecord, filename) {
   let out = ''
 
   for (const record of data) {
-    out += processRecord(record, lilypondFile) + '\n'
+    const ankiNote = processRecord(record, lilypondFile)
+    if (ankiNote) {
+      out += ankiNote + '\n'
+    }
   }
 
   console.log('Creating lilypond files...')
