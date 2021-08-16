@@ -1,5 +1,6 @@
 import { Note, Key, Chord } from '@tonaljs/tonal'
 import _ from 'lodash'
+import { numToRoman } from '../utils.mjs'
 
 import {
   triadToRomanHTML,
@@ -138,31 +139,80 @@ function* generateChords() {
   }
 }
 
-export const getChordsData = () => take(generateChords(), 50)
+export const getChordsData = () => take(generateChords(), 500)
 
 export const processChordsRecord = (record, lilypondFile) => {
   console.log(`${JSON.stringify(record, null, 2)}`)
 
-  const image = lilypondFile.addFourNotesInGrandStaff(
-    record.keyTonic,
-    record.mode,
-    [record.bassNote, record.tenorNote, record.altoNote, record.sopranoNote],
-  )
+  const {
+    keyTonic,
+    mode,
+    scaleDegree,
+    quality,
+    position,
+    bassNote,
+    tenorNote,
+    altoNote,
+    sopranoNote,
+    triadPitchClasses,
+  } = record
+
+  const id = [
+    keyTonic,
+    mode,
+    scaleDegree,
+    quality,
+    position,
+    bassNote,
+    tenorNote,
+    altoNote,
+    sopranoNote,
+  ].join('-')
+
+  const image = lilypondFile.addFourNotesInGrandStaff(keyTonic, mode, [
+    bassNote,
+    tenorNote,
+    altoNote,
+    sopranoNote,
+  ])
+
+  let romanScaleDegree = numToRoman(scaleDegree)
+  if (mode === 'major') {
+    romanScaleDegree = romanScaleDegree.toLocaleUpperCase()
+  }
+
+  let qualitySup = ''
+  if (quality === 'DIMINISHED') {
+    qualitySup = 'o'
+  } else if (quality === 'AUGMENTED') {
+    throw new Error('No augmentation please')
+  }
+
+  let positionSup = '&nbsp;'
+  let positionSub = '&nbsp;'
+
+  if (position === 'FIRST_INVERSION' || position === 'SECOND_INVERSION') {
+    positionSup = '6'
+  }
+  if (position === 'SECOND_INVERSION') {
+    positionSub = '4'
+  }
+
+  const triadRootPitchClass = triadPitchClasses[0]
+  const qualityEnglish = quality.toLocaleLowerCase()
+  const positionEnglish = position.toLocaleLowerCase().replace(/_/g, ' ')
 
   return [
-    record.keyTonic,
-    record.mode,
-    triadToRomanHTML(record.scaleDegree, record.quality, record.position),
-    image,
+    id,
+    keyTonic,
+    mode,
+    romanScaleDegree,
+    qualitySup,
+    positionSup,
+    positionSub,
+    triadRootPitchClass,
+    qualityEnglish,
+    positionEnglish,
+    `<img class="triad" src="${image}" />`,
   ].join('\t')
-
-  // const imageWithoutKey = lilypondFile.addNote(clef, natural)
-  // const imageWithKey = lilypondFile.addNoteInKey(
-  //   clef,
-  //   noteInKey,
-  //   tonicNote,
-  //   mode,
-  // )
-
-  // return `${natural}\t${tonicNote}\t${mode}\t${noteInKey}\t<img src="${imageWithoutKey}" />\t<img src="${imageWithKey}" />`
 }
