@@ -1,6 +1,29 @@
 import { Note, Interval, Key } from '@tonaljs/tonal'
 import _ from 'lodash'
 
+export const intervalToStrWithoutQuality = interval => {
+  const i = Interval.get(interval)
+
+  switch (Math.abs(i.num)) {
+    case 1:
+      return 'unison'
+    case 2:
+      return 'second'
+    case 3:
+      return 'third'
+    case 4:
+      return 'fourth'
+    case 5:
+      return 'fifth'
+    case 6:
+      return 'sixth'
+    case 7:
+      return 'seventh'
+    case 8:
+      return 'octave'
+  }
+}
+
 export const interavlToStr = interval => {
   const i = Interval.get(interval)
 
@@ -26,32 +49,7 @@ export const interavlToStr = interval => {
 
   out += ' '
 
-  switch (Math.abs(i.num)) {
-    case 1:
-      out += 'unison'
-      break
-    case 2:
-      out += 'second'
-      break
-    case 3:
-      out += 'third'
-      break
-    case 4:
-      out += 'fourth'
-      break
-    case 5:
-      out += 'fifth'
-      break
-    case 6:
-      out += 'sixth'
-      break
-    case 7:
-      out += 'seventh'
-      break
-    case 8:
-      out += 'octave'
-      break
-  }
+  out += intervalToStrWithoutQuality(interval)
 
   return out
 }

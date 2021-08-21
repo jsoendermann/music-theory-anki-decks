@@ -5,11 +5,15 @@ import {
   processKeySignaturesRecord,
 } from './decks/keySignatures.mjs'
 import { getIntervalsData, processIntervalsRecord } from './decks/intervals.mjs'
-// import {
-//   getNaturalInKeyData,
-//   processNaturalInKeyRecord,
-// } from './decks/naturalInKey.mjs'
+import {
+  getNaturalInKeyData,
+  processNaturalInKeyRecord,
+} from './decks/naturalInKey.mjs'
 import { getChordsData, processChordsRecord } from './decks/chords.mjs'
+import {
+  getIntervalsNoQualityData,
+  processIntervalsNoQualityRecord,
+} from './decks/intervals-no-quality.mjs'
 import { writeDeck } from './writeDeck.mjs'
 
 await emptyDirSync('./tmp')
@@ -29,4 +33,9 @@ await emptyDirSync('./out/media')
 //   'natural-in-key',
 // )
 
-await writeDeck(getChordsData, processChordsRecord, 'chords')
+// await writeDeck(getChordsData, processChordsRecord, 'chords')
+await writeDeck(
+  getIntervalsNoQualityData,
+  processIntervalsNoQualityRecord,
+  'intervals-no-quality',
+)
