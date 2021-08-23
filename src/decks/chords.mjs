@@ -1,12 +1,11 @@
-import { Note, Key, Chord } from '@tonaljs/tonal'
+import { Note, Key } from '@tonaljs/tonal'
 import _ from 'lodash'
-import { numToRoman } from '../utils.mjs'
 
 import {
-  triadToRomanHTML,
   getNotesInTriad,
   take,
   getRandomNoteInPitchClassBetween,
+  numToRoman,
 } from '../utils.mjs'
 
 const TRIAD_QUALITIES = {
@@ -177,7 +176,7 @@ export const processChordsRecord = (record, lilypondFile) => {
   ])
 
   let romanScaleDegree = numToRoman(scaleDegree)
-  if (mode === 'major') {
+  if (quality === 'MAJOR') {
     romanScaleDegree = romanScaleDegree.toLocaleUpperCase()
   }
 

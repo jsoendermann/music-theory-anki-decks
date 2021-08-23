@@ -33,9 +33,9 @@ await emptyDirSync('./out/media')
 //   'natural-in-key',
 // )
 
-// await writeDeck(getChordsData, processChordsRecord, 'chords')
-await writeDeck(
-  getIntervalsNoQualityData,
-  processIntervalsNoQualityRecord,
-  'intervals-no-quality',
-)
+await writeDeck(getChordsData, processChordsRecord, 'chords')
+// await writeDeck(
+//   getIntervalsNoQualityData,
+//   processIntervalsNoQualityRecord,
+//   'intervals-no-quality',
+// )
